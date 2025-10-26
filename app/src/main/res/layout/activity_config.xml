@@ -19,7 +19,7 @@
             android:textSize="24sp"
             android:layout_marginBottom="12dp"/>
 
-        <TextView android:text="API Base URL" android:textColor="@color/menu_text" />
+        <TextView android:text="API Base URL" android:textColor="@color/menu_text" / android:layout_width="match_parent" android:layout_height="wrap_content">
         <EditText android:id="@+id/apiBase" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp" android:hint="https://divaneural.com/api"/>
 
         <TextView android:text="Usuário (/admin)" android:textColor="@color/menu_text" android:layout_marginTop="12dp"/>
