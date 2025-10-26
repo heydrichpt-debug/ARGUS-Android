@@ -67,3 +67,11 @@ jobs:
             gradle-assemble.log
             deps-compile.txt
             deps-runtime.txt
+
+      - name: Mostrar final dos logs (diagnóstico rápido)
+        if: always()
+        run: |
+          echo "===== tail gradle-compile-kotlin.log ====="
+          tail -n 200 gradle-compile-kotlin.log || true
+          echo "===== tail gradle-assemble.log ====="
+          tail -n 200 gradle-assemble.log || true
