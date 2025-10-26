@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.divaneural.argus">
     <uses-permission android:name="android.permission.INTERNET"/>
-    <application
+    <application android:usesCleartextTraffic="true" android:networkSecurityConfig="@xml/network_security_config"
         android:allowBackup="true"
         android:label="ARGUS"
         android:icon="@mipmap/ic_launcher"
