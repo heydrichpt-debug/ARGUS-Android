@@ -9,32 +9,28 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <TextView
+            android:id="@+id/lblApi"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Base da API"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:paddingBottom="8dp"/>
+
         <EditText
             android:id="@+id/apiBase"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/default_api_base"
-            android:inputType="textUri"/>
-
-        <EditText
-            android:id="@+id/adminUser"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Admin user"
-            android:inputType="textEmailAddress"/>
-
-        <EditText
-            android:id="@+id/adminPass"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Admin password"
-            android:inputType="textPassword"/>
+            android:inputType="textUri"
+            android:padding="10dp"/>
 
         <Button
-            android:id="@+id/saveBtn"
+            android:id="@+id/btnSave"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Salvar"/>
-
+            android:text="Salvar"
+            android:layout_marginTop="16dp"/>
     </LinearLayout>
 </ScrollView>

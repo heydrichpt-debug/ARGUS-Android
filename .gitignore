@@ -14,3 +14,6 @@ outputs/
 # NDK / CMake cache
 .externalNativeBuild/
 .cxx/
+
+# local backups
+*.bak
