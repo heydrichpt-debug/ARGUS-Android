@@ -1,38 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/menu_bg_dark">
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <EditText
+            android:id="@+id/apiBase"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Config"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            android:layout_marginBottom="12dp"/>
+            android:hint="@string/default_api_base"
+            android:inputType="textUri"/>
 
-        <TextView android:text="API Base URL" android:textColor="@color/menu_text" / android:layout_width="match_parent" android:layout_height="wrap_content">
-        <EditText android:id="@+id/apiBase" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp" android:hint="https://divaneural.com/api"/>
+        <EditText
+            android:id="@+id/adminUser"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Admin user"
+            android:inputType="textEmailAddress"/>
 
-        <TextView android:text="Usuário (/admin)" android:textColor="@color/menu_text" android:layout_marginTop="12dp"/>
-        <EditText android:id="@+id/adminUser" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp"/>
+        <EditText
+            android:id="@+id/adminPass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Admin password"
+            android:inputType="textPassword"/>
 
-        <TextView android:text="Senha (/admin)" android:textColor="@color/menu_text" android:layout_marginTop="12dp"/>
-        <EditText android:id="@+id/adminPass" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textPassword" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp"/>
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar"/>
 
-        <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center_vertical">
-            <CheckBox android:id="@+id/receiveBetas" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            <TextView android:text="Receber betas" android:textColor="@color/menu_text" android:layout_marginLeft="8dp"/>
-        </LinearLayout>
-
-        <Button android:id="@+id/btnSave" android:text="Salvar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp"/>
     </LinearLayout>
 </ScrollView>
