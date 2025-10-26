@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/menu_bg_dark">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Config"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView android:text="API Base URL" android:textColor="@color/menu_text" />
+        <EditText android:id="@+id/apiBase" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp" android:hint="https://divaneural.com/api"/>
+
+        <TextView android:text="Usuário (/admin)" android:textColor="@color/menu_text" android:layout_marginTop="12dp"/>
+        <EditText android:id="@+id/adminUser" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp"/>
+
+        <TextView android:text="Senha (/admin)" android:textColor="@color/menu_text" android:layout_marginTop="12dp"/>
+        <EditText android:id="@+id/adminPass" android:layout_width="match_parent" android:layout_height="wrap_content" android:inputType="textPassword" android:background="@color/menu_tile_bg" android:textColor="@android:color/white" android:padding="10dp"/>
+
+        <LinearLayout android:orientation="horizontal" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center_vertical">
+            <CheckBox android:id="@+id/receiveBetas" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <TextView android:text="Receber betas" android:textColor="@color/menu_text" android:layout_marginLeft="8dp"/>
+        </LinearLayout>
+
+        <Button android:id="@+id/btnSave" android:text="Salvar" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp"/>
+    </LinearLayout>
+</ScrollView>

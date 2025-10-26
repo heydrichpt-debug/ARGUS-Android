@@ -1,0 +1,8 @@
+<resources>
+    <color name="argus_primary">#0047AB</color>
+    <color name="argus_bg_light">#F7F9FC</color>
+    <color name="argus_text_dark">#0B0E13</color>
+    <color name="menu_bg_dark">#0B0E13</color>
+    <color name="menu_tile_bg">#11151B</color>
+    <color name="menu_text">#CFE0FF</color>
+</resources>

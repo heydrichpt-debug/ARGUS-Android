@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ARGUS</string>
+    <string name="default_api_base">https://divaneural.com/api</string>
+</resources>
