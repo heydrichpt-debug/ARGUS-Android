@@ -32,27 +32,17 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build Debug APK (full logs + fail on error)
-        shell: bash
+      # <<< DIAGNÓSTICO >>>
+      - name: Diagnose AAR metadata + dependencies
         run: |
-          set -euo pipefail
-          ./gradlew :app:clean :app:assembleDebug --stacktrace --info --console=plain 2>&1 | tee gradle-build.log
+          ./gradlew :app:checkDebugAarMetadata --stacktrace --warning-mode all --console=plain | tee gradle-aar-check.log
+          ./gradlew -q :app:dependencies --configuration debugRuntimeClasspath > deps.txt || true
 
-      - name: List outputs
-        if: always()
-        run: ls -R app/build/outputs || true
-
-      - name: Upload APK
-        if: success()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Argus-APK
-          path: app/build/outputs/**/*.apk
-          if-no-files-found: error
-
-      - name: Upload Gradle log
+      - name: Upload diagnostic logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gradle-build-log
-          path: gradle-build.log
+          name: aar-check-and-deps
+          path: |
+            gradle-aar-check.log
+            deps.txt
