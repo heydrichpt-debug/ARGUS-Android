@@ -22,22 +22,37 @@ jobs:
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      # Executa o build usando Gradle 8.7 sem precisar do gradlew
-      - name: Build Debug APK (no wrapper)
-        uses: gradle/gradle-build-action@v3
+      - uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.7
-          arguments: >
-            clean :app:assembleDebug
-            --stacktrace --warning-mode all --console=plain
 
-      - name: List outputs
+      # Gera o wrapper na RAIZ do repo e garante que existe
+      - name: Generate Gradle Wrapper (root)
+        working-directory: ${{ github.workspace }}
         run: |
-          echo "== outputs =="
-          find app/build/outputs -maxdepth 3 -type f -print || true
+          gradle wrapper --gradle-version 8.7
+          ls -la
+          test -f gradlew || (echo "::error::gradlew not generated at repo root" && exit 1)
+          chmod +x gradlew
+
+      - name: Clean
+        run: ./gradlew clean --no-daemon
+
+      - name: Assemble Debug (log completo)
+        run: ./gradlew :app:assembleDebug --stacktrace --info --console=plain --no-daemon | tee gradle-assemble.log
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: argus-debug-apk
+          name: argus-apk-debug
           path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload logs (sempre)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-logs
+          path: |
+            gradle-assemble.log
+            app/build/outputs/logs/**
