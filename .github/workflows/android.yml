@@ -22,15 +22,14 @@ jobs:
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
-      - uses: gradle/actions/setup-gradle@v3
+      # Executa o build usando Gradle 8.7 sem precisar do gradlew
+      - name: Build Debug APK (no wrapper)
+        uses: gradle/gradle-build-action@v3
         with:
           gradle-version: 8.7
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
-      - name: Build Debug APK
-        run: ./gradlew clean :app:assembleDebug --stacktrace --warning-mode all --console=plain
+          arguments: >
+            clean :app:assembleDebug
+            --stacktrace --warning-mode all --console=plain
 
       - name: List outputs
         run: |
