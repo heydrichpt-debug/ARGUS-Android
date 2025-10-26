@@ -3,6 +3,7 @@ on:
   push:
     branches: [ "main" ]
   workflow_dispatch: {}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -25,53 +26,19 @@ jobs:
         with:
           gradle-version: 8.7
 
-      - name: Generate Wrapper
-        run: gradle wrapper --gradle-version 8.7
-
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Clean
-        run: ./gradlew clean --stacktrace --console=plain
-
-      - name: Compile Debug Kotlin (log completo)
-        run: ./gradlew :app:compileDebugKotlin --stacktrace --info --console=plain --max-workers=1 2>&1 | tee gradle-compile-kotlin.log
-
-      - name: Assemble Debug (log completo)
-        run: ./gradlew :app:assembleDebug --stacktrace --info --console=plain --max-workers=1 2>&1 | tee gradle-assemble.log
-
-      - name: Dependências (classpath)
-        run: |
-          ./gradlew -q :app:dependencies --configuration debugCompileClasspath > deps-compile.txt || true
-          ./gradlew -q :app:dependencies --configuration debugRuntimeClasspath > deps-runtime.txt || true
+      - name: Build Debug APK
+        run: ./gradlew clean :app:assembleDebug --stacktrace --warning-mode all --console=plain
 
       - name: List outputs
-        if: always()
-        run: ls -R app/build/outputs || true
+        run: |
+          echo "== outputs =="
+          find app/build/outputs -maxdepth 3 -type f -print || true
 
       - name: Upload APK
-        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: Argus-APK
-          path: app/build/outputs/**/*.apk
-          if-no-files-found: error
-
-      - name: Upload logs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: |
-            gradle-compile-kotlin.log
-            gradle-assemble.log
-            deps-compile.txt
-            deps-runtime.txt
-
-      - name: Mostrar final dos logs (diagnóstico rápido)
-        if: always()
-        run: |
-          echo "===== tail gradle-compile-kotlin.log ====="
-          tail -n 200 gradle-compile-kotlin.log || true
-          echo "===== tail gradle-assemble.log ====="
-          tail -n 200 gradle-assemble.log || true
+          name: argus-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
