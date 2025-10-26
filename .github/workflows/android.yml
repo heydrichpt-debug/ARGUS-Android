@@ -32,18 +32,15 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      # FAZ O STEP FALHAR SE O GRADLE FALHAR + salva log completo
-      - name: Build Debug APK (fail on error + capture logs)
+      - name: Build Debug APK (full logs + fail on error)
+        shell: bash
         run: |
           set -euo pipefail
-          ./gradlew :app:assembleDebug --stacktrace --info --warning-mode all --console=plain | tee gradle-build.log
-          test ${PIPESTATUS[0]} -eq 0
+          ./gradlew :app:clean :app:assembleDebug --stacktrace --info --console=plain 2>&1 | tee gradle-build.log
 
       - name: List outputs
         if: always()
-        run: |
-          echo "Listing outputs..."
-          ls -R app/build/outputs || true
+        run: ls -R app/build/outputs || true
 
       - name: Upload APK
         if: success()
@@ -51,23 +48,11 @@ jobs:
         with:
           name: Argus-APK
           path: app/build/outputs/**/*.apk
-          if-no-files-found: warn
+          if-no-files-found: error
 
-      # DIAGNÓSTICOS EXTRA se falhar no AAR metadata
-      - name: Dependency tree (debugRuntimeClasspath)
-        if: failure()
-        run: ./gradlew :app:dependencies --configuration debugRuntimeClasspath --console=plain | tee deps.txt || true
-
-      - name: AAR metadata details
-        if: failure()
-        run: ./gradlew :app:checkDebugAarMetadata --stacktrace --warning-mode all --console=plain | tee aar.txt || true
-
-      - name: Upload logs
+      - name: Upload Gradle log
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gradle-logs
-          path: |
-            gradle-build.log
-            deps.txt
-            aar.txt
+          name: gradle-build-log
+          path: gradle-build.log
