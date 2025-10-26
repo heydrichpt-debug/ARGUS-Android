@@ -1,7 +1,6 @@
 name: Build Argus APK
 on:
-  push:
-    branches: [ "main" ]
+  push: { branches: [ "main" ] }
   workflow_dispatch: {}
 
 jobs:
@@ -22,37 +21,26 @@ jobs:
           yes | sdkmanager --licenses
           sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
 
+      # Prepara Gradle (usa Gradle 8.7) e gera o wrapper na raiz
       - uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: 8.7
 
-      # Gera o wrapper na RAIZ do repo e garante que existe
-      - name: Generate Gradle Wrapper (root)
-        working-directory: ${{ github.workspace }}
-        run: |
-          gradle wrapper --gradle-version 8.7
-          ls -la
-          test -f gradlew || (echo "::error::gradlew not generated at repo root" && exit 1)
-          chmod +x gradlew
+      - name: Generate Wrapper
+        run: gradle wrapper --gradle-version 8.7
 
-      - name: Clean
-        run: ./gradlew clean --no-daemon
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
 
-      - name: Assemble Debug (log completo)
-        run: ./gradlew :app:assembleDebug --stacktrace --info --console=plain --no-daemon | tee gradle-assemble.log
+      - name: Assemble Debug APK (verbose)
+        run: ./gradlew :app:assembleDebug --stacktrace --info --console=plain
+
+      - name: List outputs
+        run: ls -R app/build/outputs || true
 
       - name: Upload APK
-        if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: argus-apk-debug
+          name: Argus-APK
           path: app/build/outputs/apk/debug/*.apk
-
-      - name: Upload logs (sempre)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gradle-logs
-          path: |
-            gradle-assemble.log
-            app/build/outputs/logs/**
+          if-no-files-found: error
