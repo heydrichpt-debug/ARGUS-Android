@@ -26,11 +26,11 @@ object AdminScraper {
         val now = Calendar.getInstance()
         if (lc.contains("ontem")) { now.add(Calendar.DAY_OF_MONTH, -1); return now.time }
         if (lc.contains("hoje")) { return now.time }
-        Regex("(\d{2})/(\d{2})/(\d{4})").find(lc)?.let {
+        Regex("(\\d{2})/(\\d{2})/(\\d{4})").find(lc)?.let {
             val (dd, mm, yyyy) = it.destructured
             return GregorianCalendar(yyyy.toInt(), mm.toInt()-1, dd.toInt()).time
         }
-        Regex("(\d{4})-(\d{2})-(\d{2})").find(lc)?.let {
+        Regex("(\\d{4})-(\\d{2})-(\\d{2})").find(lc)?.let {
             val (yyyy, mm, dd) = it.destructured
             return GregorianCalendar(yyyy.toInt(), mm.toInt()-1, dd.toInt()).time
         }
@@ -47,7 +47,7 @@ object AdminScraper {
         val body = resp.body?.string() ?: return emptyList()
         val doc = Jsoup.parse(body, adminBase)
         return doc.select("a[href]").map { it.absUrl("href") }
-            .filter { it.lowercase().matches(Regex(".*\.(apk|zip|pdf|jpg|jpeg|png)$")) }
+            .filter { it.lowercase().matches(Regex(".*\\.(apk|zip|pdf|jpg|jpeg|png)$")) }
             .distinct()
     }
 
