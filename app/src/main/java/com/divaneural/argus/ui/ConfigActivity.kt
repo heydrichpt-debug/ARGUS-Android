@@ -1,32 +1,35 @@
-package 
-import android.widget.Button
-import android.widget.EditTextcom.divaneural.argus.ui
+package com.divaneural.argus.ui
 
 import android.os.Bundle
-import android.widget.*
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.divaneural.argus.R
-import com.divaneural.argus.util.Prefs
 
 class ConfigActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_config)
 
         val apiBase = findViewById<EditText>(R.id.apiBase)
-        val adminUser = findViewById<EditText>(R.id.adminUser)
-        val adminPass = findViewById<EditText>(R.id.adminPass)
         val btnSave = findViewById<Button>(R.id.btnSave)
 
-        apiBase.setText(Prefs.getApiBase(this))
-        adminUser.setText(Prefs.getAdminUser(this))
-        adminPass.setText(Prefs.getAdminPass(this))
+        // Lê valor salvo (ou usa o default do strings.xml)
+        val sp = getSharedPreferences("argus_prefs", MODE_PRIVATE)
+        val current = sp.getString("api_base", getString(R.string.default_api_base))
+        apiBase.setText(current)
 
         btnSave.setOnClickListener {
-            Prefs.setApiBase(this, apiBase.text.toString().ifBlank { getString(R.string.default_api_base) })
-            Prefs.setAdminUser(this, adminUser.text.toString())
-            Prefs.setAdminPass(this, adminPass.text.toString())
-            Toast.makeText(this, "Configurações salvas", Toast.LENGTH_SHORT).show()
+            val value = apiBase.text.toString().trim()
+            if (value.isEmpty()) {
+                Toast.makeText(this, "Informe a URL da API", Toast.LENGTH_SHORT).show()
+            } else {
+                sp.edit().putString("api_base", value).apply()
+                Toast.makeText(this, "Salvo", Toast.LENGTH_SHORT).show()
+                finish()
+            }
         }
     }
 }
