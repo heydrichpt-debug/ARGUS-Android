@@ -1,32 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/lblApi"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Base da API" android:textStyle="bold" android:textSize="16sp"
-            android:paddingBottom="8dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Base da API"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:paddingBottom="8dp" />
 
         <EditText
             android:id="@+id/apiBase"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:hint="@string/default_api_base" android:inputType="textUri"
-            android:padding="10dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/default_api_base"
+            android:inputType="textUri"
+            android:padding="10dp" />
 
-        <!-- Switch opcional para “receber betas”; mesmo que não use, evita crash -->
         <Switch
             android:id="@+id/receiveBetas"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Receber versões beta" android:layout_marginTop="12dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Receber versões beta"
+            android:layout_marginTop="12dp" />
 
         <Button
             android:id="@+id/btnSave"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:text="Salvar" android:layout_marginTop="16dp"/>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>
