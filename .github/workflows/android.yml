@@ -1,6 +1,8 @@
-name: Build Argus APK
+name: Android CI (APK)
+
 on:
   push:
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -10,31 +12,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java 17
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - name: Setup Gradle (cache)
+      - name: Set up Gradle (no wrapper)
         uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.7
 
-      # Se o wrapper não estiver no repo, gera um novo
-      - name: Generate Wrapper (8.7)
-        run: |
-          gradle --version
-          gradle wrapper --gradle-version 8.7
-          chmod +x ./gradlew
-        shell: bash
+      - name: Build Debug APK
+        run: gradle assembleDebug --no-daemon
 
-      - name: Assemble Debug (full logs)
-        run: ./gradlew :app:assembleDebug --stacktrace --info --no-daemon
-
-      - name: List outputs
-        run: ls -R app/build/outputs || true
-
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Argus-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: app-debug-apks
+          path: |
+            **/build/outputs/apk/debug/*.apk
+            **/build/outputs/bundle/debug/*.aab
+          if-no-files-found: warn
