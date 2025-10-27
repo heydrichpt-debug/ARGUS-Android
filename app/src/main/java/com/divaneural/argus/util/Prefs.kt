@@ -4,32 +4,28 @@ import android.content.Context
 import com.divaneural.argus.R
 
 object Prefs {
-    private const val NAME = "argus_prefs"
-    private const val KEY_API = "api_base"
-    private const val KEY_USER = "admin_user"
-    private const val KEY_PASS = "admin_pass"
-    private const val KEY_BETA = "receive_betas"
+    private const val PREFS = "argus_prefs"
+    private const val KEY_API_BASE = "api_base"
+    private const val KEY_RECEIVE_BETAS = "receive_betas"
 
-    fun getApiBase(ctx: Context): String {
-        val d = ctx.getString(R.string.default_api_base)
-        return ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).getString(KEY_API, d) ?: d
+    fun getApiBase(context: Context): String {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val saved = prefs.getString(KEY_API_BASE, null)?.trim()
+        return if (!saved.isNullOrEmpty()) saved else context.getString(R.string.default_api_base)
     }
-    fun setApiBase(ctx: Context, v: String) {
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).edit().putString(KEY_API, v).apply()
+
+    fun setApiBase(context: Context, value: String) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().putString(KEY_API_BASE, value.trim()).apply()
     }
-    fun getAdminUser(ctx: Context): String? =
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).getString(KEY_USER, null)
-    fun setAdminUser(ctx: Context, v: String?) {
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).edit().putString(KEY_USER, v).apply()
+
+    fun getReceiveBetas(context: Context): Boolean {
+        return context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .getBoolean(KEY_RECEIVE_BETAS, false)
     }
-    fun getAdminPass(ctx: Context): String? =
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).getString(KEY_PASS, null)
-    fun setAdminPass(ctx: Context, v: String?) {
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).edit().putString(KEY_PASS, v).apply()
-    }
-    fun getReceiveBetas(ctx: Context): Boolean =
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).getBoolean(KEY_BETA, false)
-    fun setReceiveBetas(ctx: Context, v: Boolean) {
-        ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE).edit().putBoolean(KEY_BETA, v).apply()
+
+    fun setReceiveBetas(context: Context, value: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            .edit().putBoolean(KEY_RECEIVE_BETAS, value).apply()
     }
 }
