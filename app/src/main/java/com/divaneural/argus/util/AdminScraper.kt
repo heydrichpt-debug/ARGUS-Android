@@ -11,14 +11,22 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 object AdminScraper {
-
     private val client = OkHttpClient()
 
     fun buildAdminBase(apiBase: String, downloadsPath: String): String {
-        val base = apiBase.trimEnd('/')
+        // Normaliza: se o usuário salvar sem http(s), força https://
+        var base = apiBase.trim()
+        if (!base.startsWith("http://") && !base.startsWith("https://")) {
+            base = "https://$base"
+        }
+        base = base.trimEnd('/')
+
         val path = if (downloadsPath.startsWith("/")) downloadsPath else "/$downloadsPath"
         val root = base.replace(Regex("/api/?$"), "")
-        return (root + path).trimEnd('/') + "/"
+        val joined = root + path
+        // Colapsa // extras sem tocar no "://"
+        val fixed = joined.replace(Regex("(?<!:)//+"), "/")
+        return fixed.trimEnd('/') + "/"
     }
 
     fun parseDateToken(s: String): Date? {
@@ -51,7 +59,13 @@ object AdminScraper {
             .distinct()
     }
 
-    fun pickCandidates(links: List<String>, wantsBackup: Boolean, wantsType: String?, date: Date?, latest: Boolean): List<String> {
+    fun pickCandidates(
+        links: List<String>,
+        wantsBackup: Boolean,
+        wantsType: String?,
+        date: Date?,
+        latest: Boolean
+    ): List<String> {
         fun score(u: String): Int {
             var s = 0; val lu = u.lowercase(Locale.getDefault())
             if (wantsBackup && lu.contains("backup")) s += 3
@@ -60,12 +74,16 @@ object AdminScraper {
                 val yyyy = SimpleDateFormat("yyyy", Locale.getDefault()).format(date)
                 val mm = SimpleDateFormat("MM", Locale.getDefault()).format(date)
                 val dd = SimpleDateFormat("dd", Locale.getDefault()).format(date)
-                if (lu.contains("${yyyy}${mm}${dd}") || lu.contains("${yyyy}-${mm}-${dd}") || lu.contains("${dd}${mm}${yyyy}")) s += 3
+                if (lu.contains("${yyyy}${mm}${dd}") ||
+                    lu.contains("${yyyy}-${mm}-${dd}") ||
+                    lu.contains("${dd}${mm}${yyyy}")) s += 3
             }
             if (latest) s += 1
             return s
         }
-        return links.map { it to score(it) }.sortedByDescending { it.second }.map { it.first }
+        return links.map { it to score(it) }
+            .sortedByDescending { it.second }
+            .map { it.first }
     }
 
     fun guessBackup(adminBase: String, date: Date?): String {
