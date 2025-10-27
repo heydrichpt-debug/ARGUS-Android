@@ -76,11 +76,13 @@ class MainActivity : AppCompatActivity() {
         tv.text = text
         chat.addView(tv); scrollBottom()
     }
+
     private fun pushBot(text: String) {
         val tv = layoutInflater.inflate(R.layout.view_message_bot, chat, false) as TextView
         tv.text = text
         chat.addView(tv); scrollBottom()
     }
+
     private fun pushAttachment(att: Attachment) {
         val v = layoutInflater.inflate(R.layout.view_attachment, chat, false)
         v.findViewById<TextView>(R.id.title).text = att.name ?: att.url
@@ -92,12 +94,14 @@ class MainActivity : AppCompatActivity() {
         }
         chat.addView(v); scrollBottom()
     }
+
     private fun scrollBottom() { scroll.post { scroll.fullScroll(ScrollView.FOCUS_DOWN) } }
 
     private fun handleQuery(q: String) {
-        val wantsBackup = Regex("backup|c[oó]pia").containsMatchIn(q.lowercase())
-        val typeMatch = Regex("\b(pdf|zip|apk|imagem|jpg|jpeg|png)\b").find(q.lowercase())
-        val wantsType = typeMatch?.groupValues?.get(1)
+        val wantsBackup = Regex("backup|c[oó]pia", RegexOption.IGNORE_CASE).containsMatchIn(q)
+        // CORREÇÃO: usar \\b em vez de \b e fazer case-insensitive
+        val typeMatch = Regex("\\b(pdf|zip|apk|imagem|jpg|jpeg|png)\\b", RegexOption.IGNORE_CASE).find(q)
+        val wantsType = typeMatch?.groupValues?.get(1)?.lowercase()
         val latest = Regex("(últim|mais recente)", RegexOption.IGNORE_CASE).containsMatchIn(q)
         val date = AdminScraper.parseDateToken(q)
 
@@ -105,24 +109,27 @@ class MainActivity : AppCompatActivity() {
         val adminBase = AdminScraper.buildAdminBase(base, "/admin")
 
         Thread {
-            val links = AdminScraper.scrapeLinks(adminBase, Prefs.getAdminUser(this), Prefs.getAdminPass(this))
-            val candidates = AdminScraper.pickCandidates(links, wantsBackup, wantsType, date, latest)
-
-            runOnUiThread {
-                if (candidates.isEmpty() && wantsBackup) {
-                    val guess = AdminScraper.guessBackup(adminBase, date)
-                    pushBot("Não encontrei. Sugestão:")
-                    pushAttachment(Attachment(guess, guess.substringAfterLast('/'), "application/zip"))
-                } else if (candidates.isEmpty()) {
-                    pushBot("Não encontrei nada. Tente especificar uma data ou tipo (pdf/zip/apk/imagem).")
-                } else {
-                    pushBot("Encontrei isto:")
-                    candidates.take(5).forEach { url ->
-                        val name = url.substringAfterLast('/')
-                        val mime = AdminScraper.guessMime(name)
-                        pushAttachment(Attachment(url, name, mime))
+            try {
+                val links = AdminScraper.scrapeLinks(adminBase, Prefs.getAdminUser(this), Prefs.getAdminPass(this))
+                val candidates = AdminScraper.pickCandidates(links, wantsBackup, wantsType, date, latest)
+                runOnUiThread {
+                    if (candidates.isEmpty() && wantsBackup) {
+                        val guess = AdminScraper.guessBackup(adminBase, date)
+                        pushBot("Não encontrei. Sugestão:")
+                        pushAttachment(Attachment(guess, guess.substringAfterLast('/'), "application/zip"))
+                    } else if (candidates.isEmpty()) {
+                        pushBot("Não encontrei nada. Tente especificar uma data ou tipo (pdf/zip/apk/imagem).")
+                    } else {
+                        pushBot("Encontrei isto:")
+                        candidates.take(5).forEach { url ->
+                            val name = url.substringAfterLast('/')
+                            val mime = AdminScraper.guessMime(name)
+                            pushAttachment(Attachment(url, name, mime))
+                        }
                     }
                 }
+            } catch (e: Exception) {
+                runOnUiThread { pushBot("Erro ao consultar $adminBase: ${e.message}") }
             }
         }.start()
     }
