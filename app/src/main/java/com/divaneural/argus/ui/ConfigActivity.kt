@@ -3,33 +3,44 @@ package com.divaneural.argus.ui
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.divaneural.argus.R
 
 class ConfigActivity : AppCompatActivity() {
 
+    private val prefs by lazy {
+        getSharedPreferences("argus_prefs", MODE_PRIVATE)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_config)
+        setContentView(com.divaneural.argus.R.layout.activity_config)
 
-        val apiBase = findViewById<EditText>(R.id.apiBase)
-        val btnSave = findViewById<Button>(R.id.btnSave)
+        // Bind seguro (checa null e evita crash)
+        val apiBase = findViewById<EditText>(com.divaneural.argus.R.id.apiBase)
+        val receiveBetas = findViewById<Switch>(com.divaneural.argus.R.id.receiveBetas)
+        val btnSave = findViewById<Button>(com.divaneural.argus.R.id.btnSave)
 
-        // Lê valor salvo (ou usa o default do strings.xml)
-        val sp = getSharedPreferences("argus_prefs", MODE_PRIVATE)
-        val current = sp.getString("api_base", getString(R.string.default_api_base))
-        apiBase.setText(current)
+        // Carrega valores previamente salvos (se existirem)
+        val savedBase = prefs.getString("api_base", null)
+        if (savedBase != null) apiBase?.setText(savedBase)
 
-        btnSave.setOnClickListener {
-            val value = apiBase.text.toString().trim()
-            if (value.isEmpty()) {
-                Toast.makeText(this, "Informe a URL da API", Toast.LENGTH_SHORT).show()
-            } else {
-                sp.edit().putString("api_base", value).apply()
-                Toast.makeText(this, "Salvo", Toast.LENGTH_SHORT).show()
-                finish()
-            }
+        val savedBetas = prefs.getBoolean("receive_betas", false)
+        receiveBetas?.isChecked = savedBetas
+
+        // Salvar
+        btnSave?.setOnClickListener {
+            val base = apiBase?.text?.toString()?.trim().orEmpty()
+            val betas = receiveBetas?.isChecked ?: false
+
+            prefs.edit()
+                .putString("api_base", base)
+                .putBoolean("receive_betas", betas)
+                .apply()
+
+            Toast.makeText(this, "Configurações salvas", Toast.LENGTH_SHORT).show()
+            finish() // fecha a tela após salvar
         }
     }
 }
